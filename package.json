@@ -4,9 +4,9 @@
   "description": "Surprizo - Mystery Box E-commerce Platform",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node init && next dev",
+    "build": "node init && next build",
+    "start": "node init && next start",
     "db:push": "npx prisma db push",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
