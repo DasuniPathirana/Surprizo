@@ -1,0 +1,35 @@
+{
+  "name": "surprizo",
+  "version": "1.0.0",
+  "description": "Surprizo - Mystery Box E-commerce Platform",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:push": "npx prisma db push",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:studio": "npx prisma studio",
+    "setup": "npm run db:push && npm run db:seed"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "next": "^14.2.35",
+    "prisma": "^6.19.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

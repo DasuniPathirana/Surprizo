@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String          @unique
+  password       String
+  name           String
+  phone          String?
+  address        String?
+  role           String          @default("USER")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  cartItems      CartItem[]
+  orders         Order[]
+  reviews        Review[]
+  questionnaire  Questionnaire?
+}
+
+model Questionnaire {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  interests           String   // JSON array
+  budget              String   // e.g. "low", "medium", "high"
+  preferredCategories String   // JSON array
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model MysteryBox {
+  id              String     @id @default(uuid())
+  name            String
+  category        String     // TECH, BEAUTY, SNACKS, GAMING, RANDOM
+  price           Float
+  description     String
+  possibleItems   String     // JSON array of item descriptions
+  guaranteedValue Float
+  premiumChance   Int        @default(20) // percentage
+  image           String?
+  featured        Boolean    @default(false)
+  active          Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  boxItems        BoxItem[]
+  orders          Order[]
+  reviews         Review[]
+  cartItems       CartItem[]
+}
+
+model Item {
+  id          String    @id @default(uuid())
+  name        String
+  value       Float
+  description String?
+  image       String?
+  stock       Int       @default(0)
+  category    String
+  tier        String    @default("STANDARD") // STANDARD, PREMIUM
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  boxItems    BoxItem[]
+}
+
+model BoxItem {
+  id     String     @id @default(uuid())
+  boxId  String
+  itemId String
+  box    MysteryBox @relation(fields: [boxId], references: [id], onDelete: Cascade)
+  item   Item       @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([boxId, itemId])
+}
+
+model CartItem {
+  id       String     @id @default(uuid())
+  userId   String
+  boxId    String
+  quantity Int        @default(1)
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  box      MysteryBox @relation(fields: [boxId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, boxId])
+}
+
+model Order {
+  id              String     @id @default(uuid())
+  userId          String
+  boxId           String
+  totalPrice      Float
+  status          String     @default("PROCESSING") // PROCESSING, PACKED, SHIPPED, DELIVERED
+  paymentId       String?
+  paymentStatus   String     @default("PENDING") // PENDING, COMPLETED, FAILED
+  deliveryName    String
+  deliveryPhone   String
+  deliveryAddress String
+  revealedItems   String?    // JSON array of revealed item details
+  revealed        Boolean    @default(false)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation(fields: [userId], references: [id])
+  box             MysteryBox @relation(fields: [boxId], references: [id])
+  review          Review?
+}
+
+model Review {
+  id        String     @id @default(uuid())
+  userId    String
+  boxId     String
+  orderId   String     @unique
+  rating    Int        // 1-5
+  comment   String
+  approved  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id])
+  box       MysteryBox @relation(fields: [boxId], references: [id])
+  order     Order      @relation(fields: [orderId], references: [id])
+}
